@@ -125,12 +125,49 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
+.category {
+	display: flex;
+	gap:10px;
+	justify-content: center;
+	margin-bottom: 4em;
+}
+.category li {
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	color:#1D6154;
+	padding: 10px 30px;
+	cursor: pointer;
+	transition: all 500ms ease-in-out;
+}
+.category li.active, .category li:hover {
+	background: #1D6154;
+	color:#ffffff;
+}
+.category li.active {
+	cursor: inherit;
+}
 .gallery {
 	width: 100%;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-column-gap: 20px;
 	grid-row-gap: 20px;
+}
+@keyframes item {
+	from {
+        opacity: 0;
+    }
+    to {
+        opacity: 100;
+    }
+	
+}
+.gallery figure {
+	display:none;
+}
+.gallery figure.show {
+	display: block;
+	animation: item 1s ease-in-out;
 }
 
 .gallery img {
