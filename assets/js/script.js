@@ -18,6 +18,17 @@ fetch("http://localhost:5678/api/categories")
             document.querySelector(".category").innerHTML += `<li id="${categories.id}" class='btn' onclick='filterByCategory(${categories.id})'>${categories.name}</li>`;   
         }
 });
+
+let jwt = localStorage.getItem("jwt");
+let btnLogin = document.querySelector(".login"); 
+if (jwt != null) {
+   btnLogin.innerHTML = "<a href='#'>Logout</a>";
+   btnLogin.addEventListener('click', function() {
+    logout()
+   });
+   document.querySelector("#portfolio h2").innerHTML += `<a href='#' class='btnModifier'><img src="./assets/icons/edit.png" alt="Modifier"> Modifier</a>`;
+}
+
 function filterByCategory(cat) {
     let work = document.getElementsByClassName("work");
     let btn = document.getElementsByClassName("btn");
@@ -37,3 +48,9 @@ function filterByCategory(cat) {
         }
     }  
 }
+
+function logout() {
+    localStorage.removeItem("jwt");
+    window.location.href = './login.html';
+    return false;
+  }
