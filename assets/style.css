@@ -208,28 +208,29 @@ margin: auto;
 #contact h2, #login h2{
 	margin-bottom: 20px;
 }
-#contact form, #login form {
+form {
 	text-align: left;
 	margin-top:30px;
 	display: flex;
 	flex-direction: column;
 }
 
-#contact input, #login input, #login button {
+input, #login button, select {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	padding: 0 20px;
 }
-#contact label, #login label {
+ label {
 	margin: 2em 0 1em 0;
 }
-#contact textarea {
+textarea {
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"], #login button{
+input[type="submit"], #login button, .btnModal.btn{
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
@@ -242,9 +243,47 @@ input[type="submit"], #login button{
 	transition: all 450ms ease-in-out;
 	cursor: pointer;
 }
-input[type="submit"]:hover, #login button:hover{
+input[type="submit"]:hover, #login button:hover, .btnModal.btn:hover{
 	color:#1D6154;
 	background-color: transparent;
+}
+.labelFile {
+	display: flex;
+	flex-direction: column;
+	background: #E8F1F7;
+	border-radius: 3px;
+	padding: 30px;
+	align-items: center;
+	cursor: pointer;
+	font-size: 10px;
+	color:#444444;
+}
+.labelFile i {
+	color: #B9C5CC;
+	font-size: 60px;
+	margin-bottom: 20px;
+}
+.labelFile span {
+	background: #CBD6DC;
+	border: 1px solid #CBD6DC;
+	border-radius: 50px;
+	padding: 10px 30px;
+	color: #306685;
+	transition: all 500ms ease-in-out;
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+.labelFile img {
+	height: 180px;
+	width: auto;
+
+}
+.labelFile:hover span {
+	background: transparent;
+}
+.btnModal.btn {
+	width: auto;
+	padding: 10px 50px;
 }
 
 footer nav ul {
@@ -252,4 +291,91 @@ footer nav ul {
 	justify-content: flex-end;
 	margin: 2em
 }
-
+.modal {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.8);
+	width: 100%;
+	height: 100%;
+	top:0;
+	left: 0;
+}
+.modal-wrapper {
+	background-color: white;
+	padding: 60px;
+	border-radius: 10px;
+	max-width: 630px;
+	width: calc(100vw - 30px);
+	height: auto;
+	max-height: calc(100vh - 30px);
+	text-align: center;
+	position: relative;
+	overflow: auto;
+}
+.modal-wrapper *:focus {
+	box-shadow: 0 0 10px blue;
+}
+#form_work {
+	max-width: 420px;
+	margin: 0 auto;
+}
+button.btnCloseModal{
+	visibility: hidden;
+	position: absolute;
+	top:30px;
+	right: 30px;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+}
+button.btnCloseModal i {
+	visibility: visible;
+}
+.btnModal.left{
+	left: 30px;
+	position: absolute;
+	top:30px;
+	width: 30px;
+	height: 30px;
+}
+.btnModal.left span{
+	display: none;
+}
+.gallery--modal {
+	display: flex;
+	flex-wrap: wrap;
+	gap:10px;
+	margin: 30px auto;
+	padding-bottom: 30px;
+	border-bottom: 1px solid #B3B3B3;
+	max-width: 400px;
+	text-align: left;
+}
+.gallery--modal figure {
+	width:23%;
+	position: relative;
+}
+.gallery--modal img {
+	max-width: 100%;
+}
+.gallery--modal span {
+	position: absolute;
+	width:17px;
+	height:17px;
+	top:5px;
+	right: 5px;
+	background-color: black;
+	color: white;
+	font-size: 9px;
+	line-height: 17px;
+	text-align: center;
+	cursor: pointer;
+}
+.modal-wrapper h2 {
+	color:black;
+	font-size:26px;
+	font-weight: 400;
+	font-family: 'Work Sans';
+}
