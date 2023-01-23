@@ -61,21 +61,22 @@ if (jwt != null) {
         <label for="image" class="labelFile">
             <i class="fa-regular fa-image"></i>
             <span>+ Ajouter photo</span>
-            <input type="file" name="image" id="image" hidden required accept="jpg,png" onchange="previewImage(this)">
+            <input type="file" name="image" id="image" hidden accept="jpg,png" onchange="previewImage(this)">
             <p>jpg, png : 4mo max</p>
+            <div class="erroImg"></div>
         </label>
-        <label for="title">Titre</label>
+        <label for="title" class='labelTitle'>Titre</label>
         <input type="text" name="title" id="title">
-        <label for="category">Catégorie</label>
+        <label for="category" class='labelCat'>Catégorie</label>
         <select name="category" id="category">
             <option disabled selected value></option>
         </select>
         <input type="submit" value="Valider">
-    </form><div class='output'></div>`;
+    </form><div class="output"></div>`;
 }
 
 // Preview image 
-
+let imageForm = false;
 function previewImage(e) {
     const labelFile = document.querySelector(".labelFile");
     const elementSpan = labelFile.querySelector("span");
@@ -89,47 +90,74 @@ function previewImage(e) {
         elementP.remove();
         labelFile.appendChild(imagePreview);
         imagePreview.setAttribute("src", URL.createObjectURL(preview));
+        imageForm = true;
+        document.querySelector(".erroImg").innerHTML = "";
     }
 }
 
 // Add work 
 
 const form = document.forms.namedItem("newWork");
+const output = document.querySelector(".output");
+const titleForm = document.getElementById("title");
+const catForm = document.getElementById("category");
+titleForm.addEventListener("change", (e) => {
+    document.querySelector(".labelTitle").innerHTML = "Titre";
+})
+catForm.addEventListener("change", (e) => {
+    document.querySelector(".labelCat").innerHTML = "Catégorie";
+})
 if(form) {
     form.addEventListener(
         "submit",
         (event) => {
-            const formData = new FormData(form);
-            const request = new XMLHttpRequest();
-            request.open("POST", "http://localhost:5678/api/works");
-            request.setRequestHeader("Authorization", "Bearer " + jwt);
-            request.onreadystatechange = () => {
-                if (request.readyState === 4) {
-                    const works = JSON.parse(request.responseText);
-                    document.querySelector(".gallery--modal").innerHTML += `<figure id="modalWork${works.id}">
-                        <span onclick='deleteWork(${works.id})'><i class="fa-solid fa-trash-can"></i></span>
-                        <img src="${works.imageUrl}" alt="${works.title}" crossorigin>
-                        <a href='#'>éditer</a>
-                    </figure>`;
-                    document.querySelector(".gallery").innerHTML += `<figure id="work${works.id}" class="${works.categoryId} work show">
-                        <img src="${works.imageUrl}" alt="${works.title}" crossorigin>
-                        <figcaption>${works.title}</figcaption>
-                    </figure>`;
+            console.log(imageForm + " Title:" + titleForm.value + " Cat:" + catForm.value);
+            if(imageForm === false) {
+                document.querySelector(".erroImg").innerHTML = "<p style='color:red;font-weight:700;font-size:14px'>Envoyer ume image! </p>";
+                event.preventDefault();
+            } 
+            if(titleForm.value === "") {
+                document.querySelector(".labelTitle").innerHTML = "<br><span style='color:red;font-weight:700'>Saisissez un titre!</span>";
+                 event.preventDefault();
+            }
+            if(catForm.value === "") {
+                document.querySelector(".labelCat").innerHTML = "<br><span style='color:red;font-weight:700'>Choisissez une catégorie!</span>";
+                event.preventDefault();
+            }
+            if (imageForm === true && catForm.value !== "" && titleForm.value !== "")  {
+                const formData = new FormData(form);
+                const request = new XMLHttpRequest();
+                request.open("POST", "http://localhost:5678/api/works");
+                request.setRequestHeader("Authorization", "Bearer " + jwt);
+                request.onreadystatechange = () => {
+                    if (request.readyState === 4) {
+                        const works = JSON.parse(request.responseText);
+                        document.querySelector(".gallery--modal").innerHTML += `<figure id="modalWork${works.id}">
+                            <span onclick='deleteWork(${works.id})'><i class="fa-solid fa-trash-can"></i></span>
+                            <img src="${works.imageUrl}" alt="${works.title}" crossorigin>
+                            <a href='#'>éditer</a>
+                        </figure>`;
+                        document.querySelector(".gallery").innerHTML += `<figure id="work${works.id}" class="${works.categoryId} work show">
+                            <img src="${works.imageUrl}" alt="${works.title}" crossorigin>
+                            <figcaption>${works.title}</figcaption>
+                        </figure>`;
+                    }
                 }
-              }
-              const output = document.querySelector(".output");
-              request.onload = (progress) => {
-                request.status === 201
-                    ? output.innerHTML = "Gallerie mise à jour!"
-                    : output.innerHTML = `Erreur ${request.status} occurru lors de l'envoie de l'image.`;
-               };
-            request.send(formData);
-            document.querySelector(".labelFile").innerHTML = `<i class="fa-regular fa-image"></i>
-                <span>+ Ajouter photo</span>
-                <input type="file" name="image" id="image" hidden required accept="jpg,png" onchange="previewImage(this)">
-                <p>jpg, png : 4mo max</p>`;
-            form.reset();
-            event.preventDefault();
+                request.onload = (progress) => {
+                    request.status === 201
+                        ? output.innerHTML = "Gallerie mise à jour!"
+                        : output.innerHTML = `Erreur ${request.status} occurru lors de l'envoie de l'image.`;
+                };
+                request.send(formData);
+                document.querySelector(".labelFile").innerHTML = `<i class="fa-regular fa-image"></i>
+                    <span>+ Ajouter photo</span>
+                    <input type="file" name="image" id="image" hidden accept="jpg,png" onchange="previewImage(this)">
+                    <p>jpg, png : 4mo max</p>
+                    <div class="erroImg"></div>`;
+                form.reset();
+                imageForm = false;
+                event.preventDefault();
+            }
         },
         false
     );
