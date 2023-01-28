@@ -3,7 +3,9 @@ if (jwt != null) {
   window.location.href = './index.html'
 }
 
-function login() {
+document.getElementById("loginForm").addEventListener('submit', login);
+
+function login(event) {
   let user = {
     email: document.getElementById("username").value,
     password: document.getElementById("password").value
@@ -27,5 +29,5 @@ function login() {
     }
   });
   
-  return false;
+  event.preventDefault();
 }
