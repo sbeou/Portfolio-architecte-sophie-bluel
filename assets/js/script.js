@@ -53,20 +53,26 @@ fetch("http://localhost:5678/api/categories")
 // btn modifier
 
 if (jwt != null) {
-   btnLogin.innerHTML = "<a href='#'>Logout</a>";
-   btnLogin.addEventListener('click', function() {
-    logout()
-   });
-   document.querySelector("#portfolio h2").innerHTML += `<a href='#modal1' class='btnModal'><i class="fa-regular fa-pen-to-square"></i> Modifier</a>`;
-}
+    btnLogin.innerHTML = "<a href='#'>Logout</a>";
+    btnLogin.addEventListener('click', function() {
+        logout()
+    });
+    document.querySelector("#portfolio h2").innerHTML += `<a href='#modal1' class='btnModal'><i class="fa-regular fa-pen-to-square"></i> Modifier</a>`;
+    document.querySelector("#introduction figure").innerHTML += `<a href='#'><i class="fa-regular fa-pen-to-square"></i> Modifier</a>`;
+    const btnModifierTxt = document.createElement("a");
+    const txtPres = document.querySelector("#introduction article");
+    txtPres.insertBefore(btnModifierTxt, txtPres.firstChild);
+    btnModifierTxt.innerHTML = `<i class="fa-regular fa-pen-to-square"></i> Modifier`;
+    btnModifierTxt.setAttribute("href", "#");
+    document.querySelectorAll(".btnModal").forEach(a => {
+        a.addEventListener('click', openModal);
+    });
+    //banner mode edition 
+    document.querySelector(".topHeader").style.height = '60px';
+    document.querySelector(".topHeader").innerHTML += `<div class='banEdition'><i class="fa-regular fa-pen-to-square"></i> Mode édition <button>publié les changement</button></div>`;
 
-document.querySelectorAll(".btnModal").forEach(a => {
-    a.addEventListener('click', openModal);
-});
+    // Add work form 
 
-// Add work form 
-
-if (jwt != null) {
     document.getElementById('form_work').innerHTML = `<form enctype="multipart/form-data"  method="post" name="newWork">
         <label for="image" class="labelFile">
             <i class="fa-regular fa-image"></i>
@@ -109,7 +115,6 @@ if (jwt != null) {
     // Add work 
 
     const form = document.forms.namedItem("newWork");
-    const output = document.querySelector(".output");
     const titleForm = document.getElementById("title");
     const catForm = document.getElementById("category");
     titleForm.addEventListener("change", (e) => {
@@ -124,61 +129,64 @@ if (jwt != null) {
             (event) => {
                 if(imageForm === false) {
                     document.querySelector(".erroImg").innerHTML = "<p style='color:red;font-weight:700;font-size:14px'>Envoyer ume image! </p>";
-                    event.preventDefault();
                 } 
                 if(titleForm.value === "") {
                     document.querySelector(".labelTitle").innerHTML = "<br><span style='color:red;font-weight:700'>Saisissez un titre!</span>";
-                    event.preventDefault();
                 }
                 if(catForm.value === "") {
                     document.querySelector(".labelCat").innerHTML = "<br><span style='color:red;font-weight:700'>Choisissez une catégorie!</span>";
-                    event.preventDefault();
                 }
                 if (imageForm === true && catForm.value !== "" && titleForm.value !== "")  {
-                    const formData = new FormData(form);
-                    const request = new XMLHttpRequest();
-                    request.open("POST", "http://localhost:5678/api/works");
-                    request.setRequestHeader("Authorization", "Bearer " + jwt);
-                    request.onreadystatechange = () => {
-                        if (request.readyState === 4) {
-                            const works = JSON.parse(request.responseText);
-                            document.querySelector(".gallery--modal").innerHTML += `<figure id="modalWork${works.id}">
-                                <span id='${works.id}' class='btnDelete'><i class="fa-solid fa-trash-can"></i></span>
-                                <img src="${works.imageUrl}" alt="${works.title}" crossorigin>
-                                <a href='#'>éditer</a>
-                            </figure>`;
-                            document.querySelectorAll('.btnDelete').forEach(item => {
-                                item.addEventListener('click', () => {
-                                    deleteWork(item.id);
-                                })
-                            })
-                            document.querySelector(".gallery").innerHTML += `<figure id="work${works.id}" class="${works.categoryId} work show">
-                                <img src="${works.imageUrl}" alt="${works.title}" crossorigin>
-                                <figcaption>${works.title}</figcaption>
-                            </figure>`;
-                        }
-                    }
-                    request.onload = (progress) => {
-                        request.status === 201
-                            ? output.innerHTML = "Gallerie mise à jour!"
-                            : output.innerHTML = `Erreur ${request.status} occurru lors de l'envoie de l'image.`;
-                    };
-                    request.send(formData);
-                    document.querySelector(".labelFile").innerHTML = `<i class="fa-regular fa-image"></i>
-                        <span>+ Ajouter photo</span>
-                        <input type="file" name="image" id="image" hidden accept="jpg,png">
-                        <p>jpg, png : 4mo max</p>
-                        <div class="erroImg"></div>`;
-                    form.reset();
-                    imageForm = false;
-                    event.preventDefault();
+                    sendFormWork(form);
                 }
+                event.preventDefault();
             },
             false
         );
+        
     }
 }
 
+function sendFormWork(form) {
+    const output = document.querySelector(".output");
+    const formData = new FormData(form);
+    const request = fetch('http://localhost:5678/api/works', {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + jwt
+        },
+        body: formData
+    }).then((response) => response.json())
+    .then((result) => {
+        if(!result.error) {
+            output.innerHTML = "Gallerie mise à jour!";
+            document.querySelector(".labelFile").innerHTML = `<i class="fa-regular fa-image"></i>
+                <span>+ Ajouter photo</span>
+                <input type="file" name="image" id="image" hidden accept="jpg,png">
+                <p>jpg, png : 4mo max</p>
+                <div class="erroImg"></div>`;
+            image.addEventListener('change', previewImage);
+            form.reset();
+            imageForm = false;
+            document.querySelector(".gallery--modal").innerHTML += `<figure id="modalWork${result.id}">
+                <span id='${result.id}' class='btnDelete'><i class="fa-solid fa-trash-can"></i></span>
+                <img src="${result.imageUrl}" alt="${result.title}" crossorigin>
+                <a href='#'>éditer</a>
+            </figure>`;
+            document.querySelectorAll('.btnDelete').forEach(item => {
+                item.addEventListener('click', () => {
+                    deleteWork(item.id);
+                })
+            })
+            document.querySelector(".gallery").innerHTML += `<figure id="work${result.id}" class="${result.categoryId} work show">
+                <img src="${result.imageUrl}" alt="${result.title}" crossorigin>
+                <figcaption>${result.title}</figcaption>
+            </figure>`; 
+        }     
+     }).catch((error) => {
+        output.innerHTML = `Erreur ${error} occurru lors de l'envoie de l'image.`;
+      });
+}
 
 
 // Modal

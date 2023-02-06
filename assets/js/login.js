@@ -22,7 +22,6 @@ function login(event) {
   .then((result) => {
     if(result.token) {
       localStorage.setItem("jwt", result.token);
-      alert("Vous êtes conecté!");
       window.location.href = './index.html';
     } else {
       alert("Erreur dans l’identifiant ou le mot de passe");

@@ -55,6 +55,7 @@ body {
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
+	position: relative;
 }
 header {
 	display: flex;
@@ -119,9 +120,9 @@ li:hover, a:hover {
 #introduction figure {
 	flex: 1
 }
-#introduction img {
+#introduction img, #introduction figure a {
 	display: block;
-	margin: auto;
+	margin: 10px auto;
 	width: 80%;
 }
 
@@ -129,7 +130,7 @@ li:hover, a:hover {
 	flex: 1
 }
 #introduction h2 {
-	margin-bottom: 1em;
+	margin: 1em 0;
 }
 
 #introduction p {
@@ -378,4 +379,22 @@ button.btnCloseModal i {
 	font-size:26px;
 	font-weight: 400;
 	font-family: 'Work Sans';
+}
+.banEdition {
+	position: fixed;
+	top:0;
+	width: 100%;
+	color: white;
+	background-color: black;
+	left: 0;
+	text-align: center;
+	padding: 10px;
+	z-index: 2;
+}
+.banEdition button {
+	background: #FFFFFF;
+	border-radius: 60px;
+	padding: 10px 20px;
+	margin-left: 20px;
+	color: black;
 }
